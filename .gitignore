@@ -16,4 +16,4 @@ docs/
 # safecd
 *.manifest.yaml
 COMMIT_MSG
-
+PR_COMMENT

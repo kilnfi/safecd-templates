@@ -1,0 +1,31 @@
+name: safecd_pr
+
+on: 
+  pull_request:
+    branches:
+      - master
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  check:
+    strategy:
+      fail-fast: true
+
+    name: safecd_pr
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: kilnfi/safecd@1.0.1-rc.18
+        id: safecd
+        with:
+          rpc: ${{ secrets.RPC }}
+      - name: Comment PR
+        if : ${{ steps.safecd.outputs.hasPrComment == 'true' }}
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: ./PR_COMMENT
+          comment_tag: 'safecd'
