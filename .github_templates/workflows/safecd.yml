@@ -21,12 +21,15 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - uses: kilnfi/safecd@1.0.2
+          token: ${{ secrets.PAT }}
+      - uses: kilnfi/safecd@1.0.3-rc.29
         id: safecd
         with:
           rpc: ${{ secrets.RPC }}
         env:
           UPLOAD: true
+          PRIVATE_KEYS: ${{ secrets.PRIVATE_KEYS }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       - if: steps.safecd.outputs.hasChanges == 'true'
         run: |
           git config --global user.email "safecd@kiln.fi"

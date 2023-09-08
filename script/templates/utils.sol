@@ -5,6 +5,8 @@ import {Script, console} from "forge-std/Script.sol";
 import {Test} from "forge-std/Test.sol";
 
 contract SCDU is Test {
+    mapping(string => address) internal labelResolver;
+
     function fromHexChar(uint8 c) internal pure returns (uint8) {
         if (bytes1(c) >= bytes1("0") && bytes1(c) <= bytes1("9")) {
             return c - uint8(bytes1("0"));
@@ -46,6 +48,7 @@ contract SCDU is Test {
             assertTrue(labels.length % 2 == 0, "labels must be even (address, label)");
             for (uint256 i = 0; i < labels.length; i += 2) {
                 vm.label(toAddress(labels[i]), labels[i + 1]);
+                labelResolver[labels[i + 1]] = toAddress(labels[i]);
             }
         } catch {
             return;
@@ -54,5 +57,11 @@ contract SCDU is Test {
 
     function setup() internal {
         setupLabels();
+    }
+
+    function getAddress(string memory label) internal view returns (address) {
+        address addr = labelResolver[label];
+        require(addr != address(0), "label not found");
+        return addr;
     }
 }
