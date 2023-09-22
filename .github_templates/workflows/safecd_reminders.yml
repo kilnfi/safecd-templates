@@ -1,0 +1,28 @@
+name: safecd_reminders
+
+on: 
+  schedule:
+    - cron:  '15 */1 * * *'
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  check:
+    strategy:
+      fail-fast: true
+
+    name: safecd_reminders
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: kilnfi/safecd@1.0.3-rc.37
+        id: safecd
+        if: ${{ secrets.USERS }} != ''
+        with:
+          command: reminders
+          users: ${{ secrets.USERS }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
